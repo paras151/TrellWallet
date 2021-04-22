@@ -1,15 +1,44 @@
 const express = require('express');
+const stripe = require("stripe")("sk_test_MgFRWqSGP7RlXOY2Tn7fs1V900KzGb6WvH");
 const walletModel = require("./model/walletModel")
 var bodyParser = require('body-parser');
 const app = express();
+app.use(express.static('.'));
 app.use(bodyParser.urlencoded({ extended: false }))
-
 app.use(bodyParser.json())
 
-app.get('/wallet/', async (req, res) => {
+const calculateOrderAmount = amount => {
+    
+    return amount;
+  };
 
-    let result = await walletModel.find({});
-    res.send(result)
+app.post("/create-payment-intent", async (req, res) => {
+    const { amount } = req.body;
+    // Create a PaymentIntent with the order amount and currency
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: calculateOrderAmount(amount),
+      currency: "inr"
+    });
+    
+    let wallet = await walletModel.find();
+    await walletModel.findOneAndUpdate({balance:wallet[0].balance+amount/100})
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    });
+    
+  });
+
+app.get('/wallet/topup',(req,res)=>{
+    res.render("checkout.ejs");
+})
+
+app.get('/wallet', async (req, res) => {
+
+    let result = await walletModel.find();
+    res.render("wallet.ejs",{
+        balance:result[0].balance
+    })
 })
 
 app.get('/user/:id', (req,res)=>{
