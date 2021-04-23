@@ -1,7 +1,6 @@
 var stripe = Stripe("pk_test_PtV7Rx6YjDQnA7ssTMJ8Xfvl00H4fh5F6G");
 // The items the customer wants to buy
 
-
 var purchase = {
   amount:document.getElementById("amount").value*100
 };

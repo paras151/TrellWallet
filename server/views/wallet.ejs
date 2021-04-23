@@ -8,5 +8,11 @@
 </head>
 <body>
     <h1><%= balance %></h1>
+
+        <% for(var i=0; i < history.length; i++) { %>
+           <h2><%= history[i].change %></h2>
+           <h2><%= history[i].balance %></h2>
+           <h2><%= history[i].date %></h2>
+        <% } %>
 </body>
 </html>
